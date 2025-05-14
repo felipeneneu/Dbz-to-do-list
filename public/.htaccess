@@ -1,0 +1,41 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+
+O que está acontecendo aqui (linha por linha):
+
+RewriteEngine On: Isso é como ligar o "poder de redirecionamento" do porteiro. Diz ao servidor web (Apache, neste caso) para começar a usar as regras de reescrita de URL que estão neste arquivo.
+
+RewriteCond %{REQUEST_FILENAME} !-f: Essa é a primeira regra que o porteiro verifica.
+
+RewriteCond significa "condição de reescrita".
+%{REQUEST_FILENAME} é o nome do arquivo ou diretório que o usuário está tentando acessar.
+!-f significa "não é um arquivo existente".
+Tradução: Essa linha diz: "Só continue com a próxima regra se o que o usuário pediu não for um arquivo real que já existe no nosso site (como uma imagem, um arquivo CSS ou um arquivo JavaScript)".
+RewriteCond %{REQUEST_FILENAME} !-d: Essa é a segunda regra que o porteiro verifica (só se a primeira condição for verdadeira).
+
+RewriteCond significa "condição de reescrita".
+%{REQUEST_FILENAME} continua sendo o que o usuário pediu.
+!-d significa "não é um diretório existente".
+Tradução: Essa linha diz: "E também só continue com a próxima regra se o que o usuário pediu não for uma pasta (um diretório) que já existe no nosso site".
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]: Essa é a regra de redirecionamento principal que acontece se as duas condições acima forem verdadeiras (o que o usuário pediu não é um arquivo nem uma pasta existente).
+
+RewriteRule significa "regra de reescrita".
+^(.*)$ é um padrão que corresponde a qualquer coisa que o usuário digitou na URL depois do nome do site (por exemplo, /produtos, /user/123/show, etc.). O (.*) captura tudo isso e guarda na variável $1.
+index.php?url=$1 é para onde a requisição será realmente enviada. Em vez de tentar encontrar um arquivo ou pasta com o nome que o usuário digitou, o servidor vai chamar o arquivo index.php e passar o que o usuário digitou como um parâmetro chamado url. Por exemplo, se o usuário digitou /produtos, o servidor vai chamar index.php?url=produtos. Se digitou /user/123/show, chamará index.php?url=user/123/show.
+[QSA,L] são "flags" (opções) para essa regra:
+QSA (Query String Append): Se a URL original já tinha parâmetros na barra de endereço (por exemplo, /produtos?ordem=preco), essa flag garante que esses parâmetros também sejam adicionados à nova URL (index.php?url=produtos&ordem=preco).
+L (Last rule): Essa flag diz ao porteiro para parar de processar mais regras depois dessa. Uma vez que ele redirecionou para index.php, ele não precisa verificar mais nada no .htaccess.
+Em resumo sobre o .htaccess:
+
+Ele faz com que todas as requisições que não são para arquivos ou pastas existentes sejam enviadas para o arquivo index.php.
+Ele passa a URL que o usuário realmente digitou como um parâmetro chamado url para o index.php.
+Para dar sequência nisso:
+
+Configurar o Servidor: Para que o .htaccess funcione, o servidor Apache precisa ter o módulo mod_rewrite habilitado. Se não estiver, as regras não serão processadas.
+
+Processar a URL no index.php: O arquivo index.php (que veremos a seguir) precisa pegar o valor do parâmetro url ($_GET['url']) e usar o seu sistema de rotas (aquele que configuramos no routes/web.php) para decidir qual Controller e qual método devem ser chamados para lidar com aquela requisição.
+
+O .htaccess é essencial para ter URLs bonitas e amigáveis para os usuários (sem precisar mostrar o index.php na URL) e para direcionar todas as "entradas" da web para o seu ponto de controle principal (index.php).

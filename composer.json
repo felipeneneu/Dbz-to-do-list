@@ -1,0 +1,23 @@
+{
+  "name": "souzacomprog/routes",
+  "description": "project example",
+  "type": "project",
+  "license": "mit",
+  "minimum-stability": "stable",
+  "require": {
+    "phpmailer/phpmailer": "^6.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Core\\": "src/",
+      "App\\": "app/",
+      "Src\\": "src/"
+    }
+  },
+  "scripts": {
+    "serve": "php -S localhost:8000 -t public"
+  },
+  "config": {
+    "process-timeout": 0
+  }
+}
