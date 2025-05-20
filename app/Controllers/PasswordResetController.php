@@ -123,7 +123,6 @@ class PasswordResetController
       exit;
     } catch (Exception $e) {
       $this->session->set('error', $e->getMessage());
-
       header("Location: /reset-password?token=" . $token);
       exit;
     }
