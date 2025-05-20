@@ -26,18 +26,21 @@
       </div>
       <div class="w-full max-w-md bg-[#0d2d24] p-4 rounded-xl border-2 border-yellow-400 text-center">
         <h2 class="text-yellow-300 text-xl font-bold mb-4">Recuperar Senha</h2>
-        <?php if (isset($_SESSION['success'])): ?>
-          <div class="alert alert-success">
-            <?= $_SESSION['success']; ?>
+        <?php if ($this->session->has('success')): ?>
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+
+            <?= $this->session->get('success');
+            ?>
           </div>
-          <?php unset($_SESSION['success']); ?>
+          <?php $this->session->remove('success'); ?>
         <?php endif; ?>
 
-        <?php if (isset($_SESSION['error'])): ?>
-          <div class="alert alert-danger">
-            <?= $_SESSION['error']; ?>
+        <?php if ($this->session->has('error')): ?>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <?= $this->session->get('error');
+            ?>
           </div>
-          <?php unset($_SESSION['error']); ?>
+          <?php $this->session->remove('error'); ?>
         <?php endif; ?>
 
         <form action="forgot-password/send" method="post" class="space-y-3">

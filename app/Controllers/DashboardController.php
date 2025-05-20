@@ -5,19 +5,21 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Models\Tarefa;
 use Src\DB\Database;
+use App\Config\Session;
 
 class DashboardController
 {
   private $userModel;
   private $database;
+  protected Session $session;
 
 
   public function __construct()
   {
     $this->database = new Database(); // Instancia a conexão com o banco
-    $this->userModel = new User($this->database); // Instancia o model User, passando a conexão
-    session_start();
-    if (!isset($_SESSION['user'])) {
+    $this->userModel = new User($this->database);
+    $this->session = new Session(); // Instancia o model User, passando a conexão
+    if (!$this->session->has('user')) {
       header("Location: /login");
       exit;
     }
@@ -27,12 +29,12 @@ class DashboardController
   {
 
 
-    $idUser = $_SESSION['user'];
+    $idUser = $this->session->get('user');
     $userData = $this->userModel->findById($idUser);
 
 
     // Extrai os dados do usuário para variáveis individuais
-    if (!isset($_SESSION['user'])) {
+    if (!$this->session->has('user')) {
       header("Location: /login");
       exit;
     }
@@ -45,7 +47,8 @@ class DashboardController
   public function show()
   {
     // session_start();
-    $idUser = $_SESSION['user'];
+    // $idUser = $_SESSION['user'];
+    $idUser = $this->session->get('user');
     $userData = $this->userModel->findById($idUser);
 
     $tarefaModel = new Tarefa($this->database, $this->userModel);
@@ -60,7 +63,9 @@ class DashboardController
   public function criar()
   {
     if (empty($titulo = filter_input(INPUT_POST, 'titulo'))) {
-      echo "<script>alert('Preencha o campo Nome'); window.location.href='/dashboard/teste';</script>";
+      $this->session->set('error', 'Preencha o campo Task');
+      header("Location: /dashboard/show");
+      // echo "<script>alert('Preencha o campo Nome'); window.location.href='/dashboard/teste';</script>";
       exit;
     }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -71,7 +76,7 @@ class DashboardController
       $tarefaModel = new Tarefa($this->database, $this->userModel);
       $tarefaModel->criar($titulo, $usuario_id);
 
-      header("Location: /dashboard/teste");
+      header("Location: /dashboard/show");
       exit;
     }
   }
@@ -79,30 +84,34 @@ class DashboardController
   public function concluir($id)
   {
     // session_start();
-    $usuario_id = $_SESSION['user'];
+    $usuario_id = $this->session->get('user');
+    // $usuario_id = $_SESSION['user'];
     $tarefaModel = new Tarefa($this->database, $this->userModel);
     $tarefaModel->concluir($id, $usuario_id);
-    header("Location: /dashboard/teste");
+    header("Location: /dashboard/show");
     exit;
   }
 
   public function allcompleted()
   {
     // session_start();
-    $usuario_id = $_SESSION['user'];
+    $usuario_id = $this->session->get('user');
+    // $usuario_id = $_SESSION['user'];
     $tarefaModel = new Tarefa($this->database, $this->userModel);
     $tarefaModel->deletarAll($usuario_id);
-    header("Location: /dashboard/teste");
+    header("Location: /dashboard/show");
     exit;
   }
 
   public function excluir($id)
   {
     // session_start();
-    $usuario_id = $_SESSION['user'];
+
+    // $usuario_id = $_SESSION['user'];
+    $usuario_id = $this->session->get('user');
     $tarefaModel = new Tarefa($this->database, $this->userModel);
     $tarefaModel->deletar($id, $usuario_id);
-    header("Location: /dashboard/teste");
+    header("Location: /dashboard/show");
     exit;
   }
 }

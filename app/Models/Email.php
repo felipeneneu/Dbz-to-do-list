@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use App\Config\Mail;
 use PHPMailer\PHPMailer\SMTP;
 
 abstract class Email
@@ -11,6 +12,7 @@ abstract class Email
   protected array $from;
   protected array $to;
   protected string $message;
+  protected string $subject;
 
 
   public function setTo(array $to)
@@ -34,19 +36,26 @@ abstract class Email
     $this->message = $message;
   }
 
+  public function setSubject($subject)
+  {
+    $this->subject = $subject;
+  }
+
 
   protected function config()
   {
     $this->mail = new PHPMailer();
-    require_once __DIR__ . '../../../src/Mail/config.php';
-    // $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+    // require_once __DIR__ . '../../../src/Mail/config.php';
+    // $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+    $env = new Mail();
+    //Enable verbose debug output;
     $this->mail->isSMTP();                                            //Send using SMTP
-    $this->mail->Host       = EMAIL_HOST;                     //Set the SMTP server to send through
+    $this->mail->Host       = $env->getHost();                     //Set the SMTP server to send through
     $this->mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $this->mail->Username   = EMAIL_USERNAME;                     //SMTP username
-    $this->mail->Password   = EMAIL_PASSWORD;                               //SMTP password
+    $this->mail->Username   = $env->getUsername();                     //SMTP username
+    $this->mail->Password   = $env->getPassword();                               //SMTP password
     // $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-    $this->mail->Port       = EMAIL_PORT;
+    $this->mail->Port       = $env->getPort();
     $this->mail->setLanguage('pt-br');
   }
   abstract public function send();

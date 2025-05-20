@@ -27,6 +27,18 @@
       <div class="w-full max-w-md bg-[#0d2d24] p-4 rounded-xl border-2 border-yellow-400 text-center">
         <h2 class="text-yellow-300 text-xl font-bold mb-4">Login</h2>
         <form action="/auth" method="post" class="space-y-3">
+          <?php if ($this->session->get('error')): ?>
+            <label for=""
+              class="w-full flex items-center border-2 border-red-600 bg-red-300 text-bold px-4 py-2 rounded-xl"><svg
+                class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.054 0 1.636-1.14 1.078-2.054L13.078 4.946c-.526-.874-1.63-.874-2.156 0L4.004 17.946c-.558.914.024 2.054 1.078 2.054z" />
+              </svg> Email ou
+              senha
+              incorretos
+            </label>
+          <?php $this->session->destroy('error');
+          endif; ?>
           <input type="email" name="email" placeholder="Digite seu email para logar" value="felipe@adm.com"
             class="w-full px-4 py-2 rounded-lg bg-[#103e32] border border-yellow-400 text-white placeholder:text-yellow-300"
             required />
